@@ -1,4 +1,4 @@
-# Alium Messenger
+# Allium Messenger
 A private messenger.
 The plan is to create a messenger that is reasonably private, using the Tor network, for practice.
 
@@ -19,7 +19,7 @@ The plan is to create a messenger that is reasonably private, using the Tor netw
     cd
     mkdir git
     cd git
-    git clone git@github.com:xxelectronxx/alium_messenger.git
+    git clone git@github.com:xxelectronxx/allium_messenger.git
     cd alium_messenger
     ```
 1) Virtualenv
