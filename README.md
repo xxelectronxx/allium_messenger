@@ -32,3 +32,10 @@ The plan is to create a messenger that is reasonably private, using the Tor netw
     pip install -U pip
     deactivate
     ```
+1) Install PyCharm
+    On linux simply do:
+    ```
+    sudo snap install pycharm-community --classic
+    ```
+     
+    On Mac, download from [the PyCharm site](https://www.jetbrains.com/pycharm/) and install.
