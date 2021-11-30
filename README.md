@@ -8,9 +8,9 @@ Basic developement tools need to be installed on your system. You probably need 
 
 For Linux:
 
-    sudo apt-get update
-    sudo apt-get install build-essential
-    sudo apt-get install python3-dev
+    sudo apt update
+    sudo apt install build-essential
+    sudo apt install python3-dev
   
 Mac likely has the required tools already. If not, simply go to the next section to see what is missing, if anything.
 
