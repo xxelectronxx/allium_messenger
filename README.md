@@ -20,7 +20,7 @@ The plan is to create a messenger that is reasonably private, using the Tor netw
     mkdir git
     cd git
     git clone git@github.com:xxelectronxx/allium_messenger.git
-    cd alium_messenger
+    cd allium_messenger
     ```
 1) Virtualenv
     ```
