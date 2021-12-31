@@ -1,5 +1,5 @@
 from stem.control import Controller
-from flask import Flask
+from flask import Flask, request
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,20 +20,19 @@ class AlliumConnection:
         @self.app.route('/')
         def index():
             return "<h1>Tor works!</h1>"
+
         self.index = index
 
-        @self.app.route('/allium')
-        def request():
-            return "<h1>request URL works!</h1>"
-        self.request = request
+        @self.app.route('/allium', methods=['POST'])
+        def process_request():
+            logger.info(request.data)
+            return request.data
 
+        self.request = request
 
     def get_service_name(self):
         self.service_name = '7tcowwy2zjdfed4vdmooh2267i2qxzgw6jldgky7rmhnpoaxth5wahad.onion'
         return self.service_name
-
-
-
 
     def create_service(self):
         logger.info(" * Getting controller")
