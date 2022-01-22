@@ -1,3 +1,5 @@
+import os
+import json
 from stem.control import Controller
 from flask import Flask, request
 import logging
@@ -16,6 +18,8 @@ class AlliumConnection:
         self.hidden_svc_dir = f"/var/lib/tor/{hidden_svc_dir}"
         self.controller = None
         self.service_name = None
+        self.service_key_file = "./service_key.json"
+        logger.info(f'service key file: {os.path.abspath(self.service_key_file)}')
 
         @self.app.route('/')
         def index():
@@ -31,23 +35,57 @@ class AlliumConnection:
         self.request = request
 
     def get_service_name(self):
-        self.service_name = '7tcowwy2zjdfed4vdmooh2267i2qxzgw6jldgky7rmhnpoaxth5wahad.onion'
-        return self.service_name
+        """
+        check file ./service_key.json, return private and public keys if available, none otherwise
+        :param:
+        :return:
+        """
+        public = None
+        private = None
+        if os.path.exists(self.service_key_file):
+            with open(self.service_key_file, "r") as _file:
+                try:
+                    key_dict = json.load(_file)
+                    if "public" in key_dict:
+                        public = key_dict["public"]
+                    if "private" in key_dict:
+                        private = key_dict["private"]
+                except:
+                    logger.error("Could not read json file")
+        return public, private
+
+    def save_service_key(self, result):
+        _private = result.private_key
+        key_dict = {
+            "public": result.service_id,
+            "private": _private
+        }
+        with open(self.service_key_file, "w") as _file:
+            json.dump(key_dict, _file)
+        return
 
     def create_service(self):
         logger.info(" * Getting controller")
         self.controller = Controller.from_port(address=self.host, port=self.control_port)
         try:
             self.controller.authenticate(password="test_password")
-            self.controller.set_options([
-                ("HiddenServiceDir", self.hidden_svc_dir),
-                ("HiddenServicePort", "80 %s:%s" % (self.host, str(self.port)))
-            ])
-            svc_name = self.get_service_name()
+
+
+            public, private = self.get_service_name()
+            if public and private:
+                logger.info("reusing existing key")
+                self.controller.create_ephemeral_hidden_service({80: 5000}, key_type="ED25519-V3", key_content=private)
+            else:
+                logger.info("creating new key")
+                result = self.controller.create_ephemeral_hidden_service({80: 5000})
+                public = result.service_id
+                self.save_service_key(result)
+
+            svc_name = public
             logger.info(" * Created host: %s" % svc_name)
         except Exception as e:
             print(e)
-            logger.info(f'OHMYGOD!!!! {e}')
+            logger.info(f'Could not create hidden service: {e}')
         self.app.run()
 
 
