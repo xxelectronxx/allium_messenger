@@ -3,6 +3,8 @@ import json
 from stem.control import Controller
 from flask import Flask, request
 import logging
+import socks
+import socket
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -10,7 +12,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 class AlliumConnection:
 
-    def __init__(self, hidden_svc_dir, app_name='example', port=5000, host='127.0.0.1', control_port=9051):
+    def __init__(self, hidden_svc_dir, app_name='example', port=5000, host='127.0.0.1', control_port=9051,
+                 socks_port=9050):
         self.app = Flask(app_name)
         self.port = port
         self.host = host
@@ -19,10 +22,12 @@ class AlliumConnection:
         self.controller = None
         self.service_name = None
         self.service_key_file = "./service_key.json"
+        self.socks_port = socks_port
         logger.info(f'service key file: {os.path.abspath(self.service_key_file)}')
 
         @self.app.route('/')
         def index():
+            logger.info("received request to root")
             return "<h1>Tor works!</h1>"
 
         self.index = index
@@ -70,7 +75,6 @@ class AlliumConnection:
         try:
             self.controller.authenticate(password="test_password")
 
-
             public, private = self.get_service_name()
             if public and private:
                 logger.info("reusing existing key")
@@ -87,6 +91,7 @@ class AlliumConnection:
             print(e)
             logger.info(f'Could not create hidden service: {e}')
         self.app.run()
+
 
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ import json
 import os
 import tempfile
 import logging
+import urllib3
+import requests
 from types import SimpleNamespace
 from allium_messenger.connection import AlliumConnection
 
@@ -29,3 +31,30 @@ def test_save_service_key():
     assert "private" in key_dict
     assert test_result.private_key == key_dict["private"]
     os.remove(path)
+
+
+def test_get_request():
+    proxies = {
+        'http': 'socks5h://127.0.0.1:9050'
+    }
+
+    response = requests.get("http://cl63fzau3fjjblxhuswh7cosenv3sn22jhkic724wxwe6cegdijj55id.onion", proxies=proxies)
+    logger.info(f'{response.text.strip()}')
+    assert "Tor works!" in response.text
+
+
+def test_post_request():
+    proxies = {
+        'http': 'socks5h://127.0.0.1:9050'
+    }
+
+    response = requests.post("http://cl63fzau3fjjblxhuswh7cosenv3sn22jhkic724wxwe6cegdijj55id.onion/allium",
+                             proxies=proxies,
+                             json={
+                                 "address": "7tcowwy2zjdfed4vdmooh2267i2qxzgw6jldgky7rmhnpoaxth5wahad.onion",
+                                 "message": "My awesome second message (using requests library)"
+
+                             },
+                             headers={"Content-Type": "application/js"})
+    logger.info(f'{response.text.strip()}')
+    assert True
