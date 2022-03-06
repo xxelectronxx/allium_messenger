@@ -3,8 +3,8 @@ import json
 from stem.control import Controller
 from flask import Flask, request
 import logging
-import socks
-import socket
+import requests
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 class AlliumConnection:
 
-    def __init__(self, hidden_svc_dir, app_name='example', port=5000, host='127.0.0.1', control_port=9051,
+    def __init__(self, hidden_svc_dir, service_dir = None, app_name='example', port=5000, host='127.0.0.1', control_port=9051,
                  socks_port=9050):
         self.app = Flask(app_name)
         self.port = port
@@ -21,8 +21,17 @@ class AlliumConnection:
         self.hidden_svc_dir = f"/var/lib/tor/{hidden_svc_dir}"
         self.controller = None
         self.service_name = None
-        self.service_key_file = "./service_key.json"
         self.socks_port = socks_port
+        self.public = None
+        self.private = None
+        home_dir = os.environ["HOME"]
+        if service_dir:
+            self.service_dir = service_dir
+        else:
+            self.service_dir = os.path.join(home_dir, ".allium")
+            if not os.path.exists(self.service_dir):
+                os.makedirs(self.service_dir)
+        self.service_key_file = os.path.join(self.service_dir, "service_key.json")
         logger.info(f'service key file: {os.path.abspath(self.service_key_file)}')
 
         @self.app.route('/')
@@ -33,7 +42,7 @@ class AlliumConnection:
         self.index = index
 
         @self.app.route('/allium', methods=['POST'])
-        def process_request():
+        async def process_request():
             logger.info(request.data)
             return request.data
 
@@ -45,6 +54,9 @@ class AlliumConnection:
         :param:
         :return:
         """
+        if self.public and self.private:
+            return self.public, self.private
+
         public = None
         private = None
         if os.path.exists(self.service_key_file):
@@ -57,6 +69,8 @@ class AlliumConnection:
                         private = key_dict["private"]
                 except:
                     logger.error("Could not read json file")
+        self.public = public
+        self.private = private
         return public, private
 
     def save_service_key(self, result):
@@ -92,6 +106,21 @@ class AlliumConnection:
             logger.info(f'Could not create hidden service: {e}')
         self.app.run()
 
+    def send_message(self, message, receiver_address):
+        proxies = {
+            'http': f'socks5h://127.0.0.1:{self.socks_port}'
+        }
+        sender_address, _ = self.get_service_name()
+        response = requests.post(f"http://{receiver_address}.onion/allium",
+                                 proxies=proxies,
+                                 json={
+                                     "address": f"{sender_address}.onion",
+                                     "message": message
+
+                                 },
+                                 headers={"Content-Type": "application/js"})
+        logger.info(f'{response.text.strip()}')
+        return response
 
 
 if __name__ == "__main__":
