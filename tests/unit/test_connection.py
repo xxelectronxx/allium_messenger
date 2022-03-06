@@ -34,27 +34,44 @@ def test_save_service_key():
 
 
 def test_get_request():
+    my_object = AlliumConnection(hidden_svc_dir='hidden_service')
+    receiver_address, _ = my_object.get_service_name()
+    logger.info(receiver_address)
     proxies = {
         'http': 'socks5h://127.0.0.1:9050'
     }
 
-    response = requests.get("http://cl63fzau3fjjblxhuswh7cosenv3sn22jhkic724wxwe6cegdijj55id.onion", proxies=proxies)
+    response = requests.get(f"http://{receiver_address}.onion", proxies=proxies)
     logger.info(f'{response.text.strip()}')
     assert "Tor works!" in response.text
 
 
 def test_post_request():
+    my_object = AlliumConnection(hidden_svc_dir='hidden_service')
+    receiver_address, _ = my_object.get_service_name()
+    logger.info(receiver_address)
     proxies = {
         'http': 'socks5h://127.0.0.1:9050'
     }
 
-    response = requests.post("http://cl63fzau3fjjblxhuswh7cosenv3sn22jhkic724wxwe6cegdijj55id.onion/allium",
+    response = requests.post(f"http://{receiver_address}.onion/allium",
                              proxies=proxies,
                              json={
-                                 "address": "7tcowwy2zjdfed4vdmooh2267i2qxzgw6jldgky7rmhnpoaxth5wahad.onion",
+                                 "address": f"{receiver_address}.onion",
                                  "message": "My awesome second message (using requests library)"
 
                              },
                              headers={"Content-Type": "application/js"})
     logger.info(f'{response.text.strip()}')
-    assert True
+    message = json.loads(response.text)["message"]
+    assert message == "My awesome second message (using requests library)"
+
+
+def test_send_message():
+    my_object = AlliumConnection(hidden_svc_dir='hidden_service')
+    receiver_address, _ = my_object.get_service_name()
+    logger.info(receiver_address)
+    sent_message = "hello there"
+    response = my_object.send_message(sent_message, receiver_address)
+    received_message = json.loads(response.text)["message"]
+    assert received_message == sent_message
