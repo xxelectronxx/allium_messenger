@@ -74,8 +74,8 @@ class MessageInput(GridLayout):
             global identifier, message
             identifier = self.ids.tor_identifier.text # Tor identifier that user wants to send message to
             message = self.ids.tor_identifier.text # Message from user
-            self.ids.tor_identifier.text = self.clear_inputs()
-            self.ids.message.text = self.clear_inputs()
+            self.ids.tor_identifier.text = self.clear_inputs
+            self.ids.message.text = self.clear_inputs
             sent_popup = Popup(title='Message',
                                content=Label(text='Message Sent'),
                                size_hint=(None, None), size=(dp(200), dp(200)))
