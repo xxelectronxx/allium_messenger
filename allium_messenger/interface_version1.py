@@ -10,6 +10,8 @@ import pandas as pd
 import csv
 
 Window.size = (750, 510)
+identifier = None
+message = None
 new_person_popup = Popup()
 delete_person_popup = Popup()
 
@@ -68,9 +70,12 @@ class MessageInput(GridLayout):
 
     def send_message(self):
         if self.ids.tor_identifier.text != "" and self.ids.message.text != "":
-            # Code for sending message should be triggered here, delete the pass (it is just a placeholder)
-            self.ids.tor_identifier.text = ""
-            self.ids.message.text = ""
+            # Code for sending message should be triggered here
+            global identifier, message
+            identifier = self.ids.tor_identifier.text # Tor identifier that user wants to send message to
+            message = self.ids.tor_identifier.text # Message from user
+            self.ids.tor_identifier.text = self.clear_inputs()
+            self.ids.message.text = self.clear_inputs()
             sent_popup = Popup(title='Message',
                                content=Label(text='Message Sent'),
                                size_hint=(None, None), size=(dp(200), dp(200)))
