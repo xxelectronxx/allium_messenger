@@ -8,6 +8,8 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import pandas as pd
 import csv
+from allium_messenger.connection import AlliumConnection
+allium_object = AlliumConnection(hidden_svc_dir='hidden_service', process_message_functor=process_message_functor)
 
 Window.size = (750, 510)
 identifier = None
