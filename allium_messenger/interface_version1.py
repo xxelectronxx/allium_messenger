@@ -8,8 +8,11 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import pandas as pd
 import csv
+import threading
+import console_chat
 from allium_messenger.connection import AlliumConnection
-allium_object = AlliumConnection(hidden_svc_dir='hidden_service', process_message_functor=process_message_functor)
+
+allium_object = AlliumConnection(hidden_svc_dir='hidden_service')
 
 Window.size = (750, 510)
 identifier = None
@@ -74,8 +77,9 @@ class MessageInput(GridLayout):
         if self.ids.tor_identifier.text != "" and self.ids.message.text != "":
             # Code for sending message should be triggered here
             global identifier, message
-            identifier = self.ids.tor_identifier.text # Tor identifier that user wants to send message to
-            message = self.ids.tor_identifier.text # Message from user
+            identifier = self.ids.tor_identifier.text  # Tor identifier that user wants to send message to
+            message = self.ids.message.text  # Message from user
+            allium_object.send_message(message, identifier)
             self.ids.tor_identifier.text = self.clear_inputs
             self.ids.message.text = self.clear_inputs
             sent_popup = Popup(title='Message',
@@ -117,4 +121,6 @@ class AlliumApp(App):
     pass
 
 
+service = threading.Thread(target=allium_object.create_service, args=(), daemon=True)
+service.start()
 AlliumApp().run()

@@ -19,6 +19,7 @@ from allium_messenger.connection import AlliumConnection
 
 def process_message_functor(payload):
     decoded = json.loads(payload.decode("utf-8"))
+
     print("--------------------------------------------------------------")
     print(f"received message from {decoded['address']}:")
     print(f"   {decoded['message']}")

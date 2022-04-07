@@ -4,6 +4,7 @@ from stem.control import Controller
 from flask import Flask, request
 import logging
 import requests
+import console_chat
 
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ logging.basicConfig(level=logging.WARNING)
 
 class AlliumConnection:
 
-    def __init__(self, hidden_svc_dir, service_dir = None, app_name='example', port=5000, host='127.0.0.1', control_port=9051,
+    def __init__(self, hidden_svc_dir, service_dir=None, app_name='example', port=5000, host='127.0.0.1', control_port=9051,
                  socks_port=9050, process_message_functor=None):
         self.app = Flask(app_name)
         self.port = port
@@ -27,7 +28,7 @@ class AlliumConnection:
         if process_message_functor:
             self.process_message_functor = process_message_functor
         else:
-            process_message_functor = lambda x: logger.info(x)
+            self.process_message_functor = lambda x: logger.info(x)
         home_dir = os.environ["HOME"]
         if service_dir:
             self.service_dir = service_dir
@@ -49,7 +50,7 @@ class AlliumConnection:
         def process_request():
             logger.info("received message")
             #logger.info(request.data)
-            self.process_message_functor(request.data)
+            console_chat.process_message_functor(request.data)
             logger.info("message processed")
             return request.data
 
