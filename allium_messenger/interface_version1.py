@@ -10,11 +10,21 @@ import pandas as pd
 import csv
 import threading
 import json
+import os
+import sys
+
+_dir = os.path.abspath(os.path.dirname(__file__))
+_dir = os.path.join(_dir, "../")
+_dir = os.path.abspath(_dir)
+sys.path.append(_dir)
+
 from allium_messenger.connection import AlliumConnection
 import logging
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+CONTACTS_FILE = os.path.join(_dir, "allium_messenger", "contacts.csv")
 
 
 def process_message_functor(payload):
@@ -55,7 +65,7 @@ class PeopleList(GridLayout):
         delete_person_btn.bind(on_press=self.delete_person)
         self.add_widget(add_person_btn)
         self.add_widget(delete_person_btn)
-        contacts = pd.read_csv("contacts.csv")
+        contacts = pd.read_csv(CONTACTS_FILE)
         for i in range(len(contacts)):
             self.person_btn = Button(text=f"{contacts['name'].loc[i]}: {contacts['identifier'].loc[i]}",
                                      size_hint=(1, None),
@@ -112,7 +122,7 @@ class NewPerson(GridLayout):
 
     def confirm_person(self):
         global new_person_popup
-        with open('contacts.csv', 'a') as file:
+        with open(CONTACTS_FILE, 'a') as file:
             new_person_info = f"\n{self.ids.new_person_name.text},{self.ids.new_person_identifier.text}"
             file.write(new_person_info)
         new_person_popup.dismiss()
@@ -123,11 +133,11 @@ class DeletePerson(GridLayout):
     def confirm_delete(self):
         global delete_person_popup
         people = list()
-        with open('contacts.csv', 'r') as file:
+        with open(CONTACTS_FILE, 'r') as file:
             for row in csv.reader(file):
                 if row[0] != self.ids.delete_person_name.text and row[1] != self.ids.delete_person_identifier.text:
                     people.append(row)
-        with open('contacts.csv', 'w', newline='') as file:
+        with open(CONTACTS_FILE, 'w', newline='') as file:
             csv.writer(file).writerows(people)
         delete_person_popup.dismiss()
 
