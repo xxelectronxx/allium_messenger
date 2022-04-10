@@ -1,7 +1,7 @@
 pytest~=6.2.5
 stem~=1.8.0
 Flask~=2.0.2
-
+PySocks==1.7.1
 urllib3~=1.26.8
 requests~=2.27.1
 pandas~=1.4.1
