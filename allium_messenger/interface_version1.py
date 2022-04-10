@@ -9,10 +9,25 @@ from kivy.uix.label import Label
 import pandas as pd
 import csv
 import threading
-import console_chat
+import json
 from allium_messenger.connection import AlliumConnection
+import logging
 
-allium_object = AlliumConnection(hidden_svc_dir='hidden_service')
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+
+def process_message_functor(payload):
+    decoded = json.loads(payload.decode("utf-8"))
+
+    print("--------------------------------------------------------------")
+    print(f"received message from {decoded['address']}:")
+    print(f"   {decoded['message']}")
+    print("--------------------------------------------------------------")
+    return
+
+
+allium_object = AlliumConnection(hidden_svc_dir='hidden_service', process_message_functor=process_message_functor)
 
 Window.size = (750, 510)
 identifier = None
