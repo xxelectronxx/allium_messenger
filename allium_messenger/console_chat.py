@@ -7,7 +7,6 @@ import time
 import pandas as pd
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 _dir = os.path.abspath(os.path.dirname(__file__))
 _dir = os.path.join(_dir, "../")
@@ -20,7 +19,8 @@ from allium_messenger.connection import AlliumConnection
 def process_message_functor(payload):
     decoded = json.loads(payload.decode("utf-8"))
 
-    print("--------------------------------------------------------------")
+    logger.error("--------------------------------------------------------------")
+    logger.info("test")
     print(f"received message from {decoded['address']}:")
     print(f"   {decoded['message']}")
     print("--------------------------------------------------------------")
@@ -63,4 +63,5 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()

@@ -4,11 +4,10 @@ from stem.control import Controller
 from flask import Flask, request
 import logging
 import requests
-import console_chat
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.WARNING)
+#logging.basicConfig(level=logging.WARNING)
 
 
 class AlliumConnection:
@@ -50,7 +49,7 @@ class AlliumConnection:
         def process_request():
             logger.info("received message")
             #logger.info(request.data)
-            console_chat.process_message_functor(request.data)
+            self.process_message_functor(request.data)
             logger.info("message processed")
             return request.data
 
