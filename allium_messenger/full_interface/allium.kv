@@ -1,0 +1,242 @@
+#: import WipeTransition kivy.uix.screenmanager.WipeTransition
+
+WindowManager:
+    SendingWindow:
+    ReceivingWindow:
+
+<SendingWindow>:
+    name: "sending"
+    GridLayout:
+        cols: 3
+        ScrollPeopleList:
+        MessageInput:
+        Button:
+            text: "Inbox"
+            on_release:
+                app.root.current = "receiving"
+            size_hint: None, .5
+
+<ReceivingWindow>:
+    name: "receiving"
+    GridLayout:
+        cols: 3
+        ScrollMessageList:
+        MessageInfo:
+        Button:
+            text: "E-Mail"
+            on_release:
+                app.root.current = "sending"
+            size_hint: None, .5
+
+<ScrollPeopleList@ScrollView>:
+    PeopleList:
+
+<ScrollMessageList@ScrollView>:
+    MessageList:
+
+<PeopleList>:
+    cols: 1
+    size_hint: 1, None
+    height: self.minimum_height
+    spacing: "2dp", "2dp"
+
+<MessageInput>:
+    rows: 7
+    spacing: "0dp", "10dp"
+    padding: ("8dp", "10dp", "8dp", "0dp")
+    Label:
+        text: "Recipient Tor Identifier:"
+        size_hint: .5, None
+        size: 0, "20dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        size_hint: .5, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Label:
+        text: "Message:"
+        size_hint: .5, None
+        size: 0, "20dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        size_hint: .5, None
+        size: 0, "325dp"
+        cursor_color: 0, 0, 0, 1
+    Button:
+        text: "Send"
+        size_hint: .5, None
+        size: 0, "53dp"
+        on_press: root.send_message()
+
+<NewPerson>:
+    rows: 5
+    size_hint: None, None
+    size: "300dp", "290dp"
+    padding: ("7dp", "75dp", "0dp", "0dp")
+    spacing: "0dp", "15dp"
+    Label:
+        text: "Person Name:"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        id: new_person_name
+        size_hint: 1, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Label:
+        text: "Person Tor Identifier:"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        id: new_person_identifier
+        size_hint: 1, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Button:
+        text: "Confirm"
+        size_hint: 1, None
+        size: 0, "53dp"
+        on_press: root.confirm_person()
+
+<DeletePerson>:
+    rows: 5
+    size_hint: None, None
+    size: "300dp", "290dp"
+    padding: ("7dp", "75dp", "0dp", "0dp")
+    spacing: "0dp", "15dp"
+    Label:
+        text: "Person Name:"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        id: delete_person_name
+        size_hint: 1, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Label:
+        text: "Person Tor Identifier:"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        id: delete_person_identifier
+        size_hint: 1, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Button:
+        text: "Confirm"
+        size_hint: 1, None
+        size: 0, "53dp"
+        on_press: root.confirm_delete()
+
+<MessageList>:
+    cols: 1
+    size_hint: 1, None
+    height: self.minimum_height
+    spacing: "2dp", "2dp"
+
+<MessageInfo>:
+    rows: 6
+    spacing: "0dp", "10dp"
+    padding: ("8dp", "10dp", "8dp", "0dp")
+    Label:
+        text: "Sender Tor Identifier:"
+        size_hint: .5, None
+        size: 0, "20dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        size_hint: .5, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Label:
+        text: "Message:"
+        size_hint: .5, None
+        size: 0, "20dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        size_hint: .5, None
+        size: 0, "380dp"
+        cursor_color: 0, 0, 0, 1
+
+<DeleteMessage>:
+    rows: 5
+    size_hint: None, None
+    size: "300dp", "290dp"
+    padding: ("7dp", "75dp", "0dp", "0dp")
+    spacing: "0dp", "15dp"
+    Label:
+        text: "Message Identifier:"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        id: delete_message_identifier
+        size_hint: 1, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Label:
+        text: "Message Contents:"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    TextInput:
+        id: delete_message_content
+        size_hint: 1, None
+        size: 0, "30dp"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+    Button:
+        text: "Confirm"
+        size_hint: 1, None
+        size: 0, "53dp"
+        on_press: root.confirm_message_delete()
+
+
+<ClearMessages>:
+    rows: 2
+    size_hint: None, None
+    size: "300dp", "200dp"
+    padding: ("7dp", "75dp", "0dp", "0dp")
+    spacing: "0dp", "30dp"
+    Label:
+        text: "Do you want to clear all messages?"
+        size_hint: 1, None
+        size: 0, "15dp"
+        text_size: self.size
+        halign: "left"
+        valign: "top"
+    Button:
+        text: "Confirm"
+        size_hint: 1, None
+        size: 0, "53dp"
+        on_press: root.confirm_message_clear()
