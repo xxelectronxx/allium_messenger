@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 from stem.control import Controller
 from flask import Flask, request
@@ -7,6 +8,8 @@ import requests
 
 
 logger = logging.getLogger(__name__)
+
+
 #logging.basicConfig(level=logging.WARNING)
 
 
@@ -92,7 +95,12 @@ class AlliumConnection:
             json.dump(key_dict, _file)
         return
 
-    def create_service(self):
+    def create_service(self, logging_level=logging.INFO):
+        handler = logging.StreamHandler(sys.stdout)
+        formatter = logging.Formatter('[%(name)s : %(levelname)s] - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging_level)
         logger.info(" * Getting controller")
         self.controller = Controller.from_port(address=self.host, port=self.control_port)
         try:

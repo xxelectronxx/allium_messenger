@@ -22,7 +22,9 @@ from allium_messenger.connection import AlliumConnection
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging_level = logging.INFO
+logging.basicConfig(level=logging_level,
+                    format="[%(name)s:%(levelname)s] %(module)s %(funcName)s %(message)s")
 
 CONTACTS_FILE = os.path.join(_dir, "allium_messenger", "contacts.csv")
 
@@ -146,6 +148,6 @@ class AlliumApp(App):
     pass
 
 
-service = threading.Thread(target=allium_object.create_service, args=(), daemon=True)
+service = threading.Thread(target=allium_object.create_service, args=(logging_level,), daemon=True)
 service.start()
 AlliumApp().run()
